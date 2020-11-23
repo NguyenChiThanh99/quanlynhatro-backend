@@ -44,7 +44,7 @@ exports.register = async function(req, res) {
         }
         const checkEmail = await User.findOne({ email: user.email }) 
         if (checkEmail) {
-            res.json({
+            return res.json({
                 status: false,
                 message: 'Email đã được sử dụng'
             })
