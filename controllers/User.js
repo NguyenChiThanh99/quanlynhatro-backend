@@ -91,12 +91,12 @@ exports.register = async function(req, res) {
         await mailer.SendEmailWithRegister(user.email, random);
         const issave = await newuser.save();
         if (issave) {
-            res.json({
+            return res.json({
                 status: true,
                 user: newuser
             })
         } else {
-            res.json({
+            return res.json({
                 status: false,
                 message: 'Lỗi không tạo được User'
             })
