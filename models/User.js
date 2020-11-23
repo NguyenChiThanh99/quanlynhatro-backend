@@ -62,6 +62,10 @@ var userSchema = new Schema({
     firstlogin: {
         type: Boolean,
         default: false
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: {
