@@ -11,7 +11,7 @@ function validateEmail(text) {
     }
 }
 
-exports.register = async function(req, res) {
+exports.Register = async function(req, res) {
     if (!req.body) {
         return res.json({
             status: false,
@@ -108,4 +108,8 @@ exports.register = async function(req, res) {
             message: err.message
         })
     }
+}
+
+exports.ChangePassword = async function(req, res) {
+    
 }
