@@ -42,6 +42,13 @@ exports.register = async function(req, res) {
                 message: "Email is not correct format"
             })
         }
+        const checkEmail = await User.findOne({ email: user.email }) 
+        if (checkEmail) {
+            res.json({
+                status: false,
+                message: 'Email đã được sử dụng'
+            })
+        }      
         if (!user.name) {
             return res.json({
                 status: false,
@@ -82,6 +89,18 @@ exports.register = async function(req, res) {
         const newuser = new User(req.body);
         newuser.password = await User.hashPassword(random)
         await mailer.SendEmailWithRegister(user.email, random);
+        const issave = await newuser.save();
+        if (issave) {
+            res.json({
+                status: true,
+                user: newuser
+            })
+        } else {
+            res.json({
+                status: false,
+                message: 'Lỗi không tạo được User'
+            })
+        }
 
     } catch(err) {
         return res.json({
