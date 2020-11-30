@@ -101,7 +101,6 @@ exports.Register = async function(req, res) {
                 message: 'Lỗi không tạo được User'
             })
         }
-
     } catch(err) {
         return res.json({
             status: false,
@@ -111,5 +110,74 @@ exports.Register = async function(req, res) {
 }
 
 exports.ChangePassword = async function(req, res) {
-    
+    if (!req.body) {
+        return res.json({
+            status: false,
+            message: "Empty Body"
+        })
+    }
+    try {
+        const users = {
+            email: req.body.email,
+            password: req.body.password,
+            newpassword: req.body.newpassword,
+            newpasswordconfirm: req.body.newpasswordconfirm
+        }
+        if (!users.email) {
+            return res.json({
+                status: false,
+                message: "Email is required"
+            })
+        }
+        if (!users.password) {
+            return res.json({
+                status: false,
+                message: "Password is required"
+            })
+        }
+        if (!users.newpassword) {
+            return res.json({
+                status: false,
+                message: "New Password is required"
+            })
+        }
+        if (!users.newpasswordconfirm) {
+            return res.json({
+                status: false,
+                message: "New Password Confirm is required"
+            })
+        }
+        if (users.newpassword !== users.newpasswordconfirm) {
+            return res.json({
+                status: false,
+                message: "New Password and New Password Confirm are not corrected"
+            })
+        }
+        const checkUser = await User.findOne({ email: users.email })
+        if (!checkUser) {
+            return res.json({
+                status: false,
+                message: "Email không có trong database"
+            })
+        }
+        const checkPassword = await bcrypt.compare(users.password, checkUser.password);
+        if (!checkPassword) {
+            return res.json({
+                status: false,
+                message: "Password không đúng"
+            })
+        }
+        const hash = await User.hashPassword(users.newpassword);
+        checkUser.password = hash;
+        await checkUser.save();
+        return res.json({
+            status: true,
+            user: checkUser
+        })
+    } catch(err) {
+        return res.json({
+            status: false,
+            message: err.message
+        })
+    }
 }
