@@ -181,3 +181,41 @@ exports.ChangePassword = async function(req, res) {
         })
     }
 }
+
+exports.ForgetPassword = async function(req, res) {
+    if (!req.body) {
+        return res.json({
+            status: false,
+            message: "Empty Body"
+        })
+    }
+    try {
+        const email = req.body.email;
+        if (!email) {
+            return res.json({
+                status: false,
+                message: "Email is required"
+            })
+        }
+        const checkUser = await User.findOne({ email: email })
+        if (!checkUser) {
+            return res.json({
+                status: false,
+                message: "Email không có trong database"
+            })
+        }
+        let random = await Math.random().toString(36).substring(7);
+        checkUser.password = await User.hashPassword(random);
+        await mailer.SendEmailWithForgetPassword(checkUser.email, random);
+        await checkUser.save();
+        return res.json({
+            status: true,
+            User: checkUser
+        })
+    } catch(err) {
+        return res.json({
+            status: false,
+            message: err.message
+        })
+    }
+}

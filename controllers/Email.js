@@ -35,5 +35,19 @@ module.exports = {
       `
     }
     mailer(message);
+  },
+  SendEmailWithForgetPassword(email, password) {
+    const message = {
+      to: email,
+      subject: 'Mật khẩu MỚI đăng nhập quanlynhatro.online',
+      html: ` 
+        <h3>quanlynhatro.online thông báo</h3>
+        <i>Đây là mật khẩu mới đăng nhập vào quanlynhatro.online</i>
+        <ul>
+          <li>Mật khẩu: ${password}</li>
+        </ul>
+      `
+    }
+    mailer(message);
   }
 }
