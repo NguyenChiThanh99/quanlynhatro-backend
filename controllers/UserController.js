@@ -1,6 +1,8 @@
 const User = require('../models/User')
+const Product = require('../models/Block')
 const bcrypt = require('bcryptjs')
-const mailer = require('./Email')
+const mailer = require('../controllers/EmailController')
+const jwt = require('jsonwebtoken')
 
 function validateEmail(text) {
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -28,7 +30,11 @@ exports.Register = async function(req, res) {
             birthday: req.body.birthday ? req.body.birthday : '',
             gender: req.body.gender,
             avatar: req.body.avatar ? req.body.avatar : '',
-            job: req.body.job
+            job: req.body.job,
+            startDate: req.body.startDate,
+            price: req.body.price,
+            blocks: req.body.blocks,
+            room: req.body.room
         }
         if (!user.email) {
             return res.json({
@@ -85,6 +91,38 @@ exports.Register = async function(req, res) {
                 message: "Job is required"
             })
         }
+        if (!user.startDate) {
+            return res.json({
+                status: false,
+                message: "Start Date is required"
+            })
+        }
+        if (!user.price) {
+            return res.json({
+                status: false,
+                message: "Price is required"
+            })
+        }
+        if (!user.blocks) {
+            return res.json({
+                status: false,
+                message: "Blocks is required"
+            })
+        }
+        if (!user.room) {
+            return res.json({
+                status: false,
+                message: "Room is required"
+            })
+        }
+        const checkBlocks = await Product.findOne({ _id: user.blocks, isDeleted: false, })
+        if (!checkBlocks) {
+            return res.json({
+                status: false,
+                message: "Dãy trọ nhập vào không có trong database"
+            })
+        }
+        
         let random = await Math.random().toString(36).substring(7);
         const newuser = new User(req.body);
         newuser.password = await User.hashPassword(random)
@@ -127,6 +165,12 @@ exports.ChangePassword = async function(req, res) {
             return res.json({
                 status: false,
                 message: "Email is required"
+            })
+        }
+        if (users.email && !validateEmail(users.email)) {
+            return res.json({
+                status: false,
+                message: "Email is not correct format"
             })
         }
         if (!users.password) {
@@ -197,6 +241,12 @@ exports.ForgetPassword = async function(req, res) {
                 message: "Email is required"
             })
         }
+        if (email && !validateEmail(email)) {
+            return res.json({
+                status: false,
+                message: "Email is not correct format"
+            })
+        }
         const checkUser = await User.findOne({ email: email })
         if (!checkUser) {
             return res.json({
@@ -211,6 +261,58 @@ exports.ForgetPassword = async function(req, res) {
         return res.json({
             status: true,
             User: checkUser
+        })
+    } catch(err) {
+        return res.json({
+            status: false,
+            message: err.message
+        })
+    }
+}
+
+exports.Login = async function(req, res) {
+    try {
+        const users = {
+            email : req.body.email,
+            password: req.body.password
+        }
+        if (!users.email) {
+            return res.json({
+                status: false,
+                message: "Email is required"
+            })
+        }
+        if (users.email && !validateEmail(users.email)) {
+            return res.json({
+                status: false,
+                message: "Email is not correct format"
+            })
+        }
+        if (!users.password) {
+            return res.json({
+                status: false,
+                message: "Password is required"
+            })
+        }
+        const checkuser = await User.findOne({ email : users.email })
+        if (!checkuser) {
+            return res.json({
+                status: false,
+                message: "Email is not exist"
+            })
+        }
+        const isCompare = await bcrypt.compare(users.password, checkuser.password);
+        if (!isCompare) {
+            return res.json({
+                status: false,
+                message: "Login Error"
+            })
+        }
+        const token = await jwt.sign({user: checkuser}, process.env.ACCESS_TOKEN_SECRET)
+        return res.json({
+            status: true,
+            user: checkuser,
+            token: token
         })
     } catch(err) {
         return res.json({

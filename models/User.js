@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs');
 var Schema = mongoose.Schema
 
 var userSchema = new Schema({
@@ -62,6 +62,22 @@ var userSchema = new Schema({
     firstlogin: {
         type: Boolean,
         default: false
+    },
+    startDate: {
+        type: Date,
+        required: true,
+    },
+    price: {
+        type: Number,
+        required: true,
+    },
+    blocks: {
+        type: Schema.Types.ObjectId,
+        required: true,
+    },
+    room: {
+        type: Schema.Types.ObjectId,
+        required: true
     },
     isDeleted: {
         type: Boolean,
