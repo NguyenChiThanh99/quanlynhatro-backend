@@ -18,10 +18,10 @@ router.post('/block/getallblockbyadminid', GetAllBlockByAdminId)
 
 
 ///SERVICE
-router.post('/service/create', CreateService)
+router.post('/service/create', authenticateToken, CreateService)
 router.post('/service/getservicebyadminid', getServiceByAdminId)
 
 ///ROOM
-router.post('/room/create', CreateRoom)
+router.post('/room/create', authenticateToken, CreateRoom)
 router.post('/room/getroombyblockid', GetRoomByBlockId)
 module.exports = router;
