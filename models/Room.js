@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 var Schema = mongoose.Schema
 
-var userSchema = new Schema({
+var roomSchema = new Schema({
     name: {
         type: String,
         trim: true,
@@ -35,8 +35,8 @@ var userSchema = new Schema({
         required: true
     },
     service: {
-        type: Schema.Types.Array,
-        required: true
+        type: [Schema.Types.ObjectId],
+        default: undefined
     },
     isDeleted: {
         type: Boolean,
@@ -49,4 +49,4 @@ var userSchema = new Schema({
     }
 });
 
-module.exports = mongoose.model('Product', userSchema, 'product');
+module.exports = mongoose.model('Room', roomSchema, 'room');

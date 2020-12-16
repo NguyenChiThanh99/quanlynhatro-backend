@@ -3,6 +3,7 @@ const router = express.Router()
 const {authenticateToken} = require('../controllers/AuthController')
 const {Register, ChangePassword, ForgetPassword, Login} = require('../controllers/UserController')
 const {Create, GetAllBlockByAdminId} = require('../controllers/BlockController')
+const {CreateService, getServiceByAdminId} = require('../controllers/ServiceController')
 
 ///USER
 router.post('/user/register', Register)
@@ -15,4 +16,8 @@ router.post('/block/create', Create)
 router.post('/block/getallblockbyadminid', GetAllBlockByAdminId)
 
 
-module.exports = router;    
+///SERVICE
+router.post('/service/create', CreateService)
+router.post('/service/getservicebyadminid', getServiceByAdminId)
+
+module.exports = router;
