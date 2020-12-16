@@ -1,8 +1,9 @@
 const Room = require('../models/Room')
 const User = require('../models/User')
 const Block = require('../models/Block')
+const Service = require('../models/Service')
 
-exports.Create = async function(req, res) {
+exports.CreateRoom = async function(req, res) {
     if (!req.body) {
         return res.json({
             status: false,
@@ -69,12 +70,22 @@ exports.Create = async function(req, res) {
                 message: "Image is required"
             })
         }
-        
-        const newblock = new Block(block);
-        await newblock.save();
+        if (room.service) {
+            for (let i = 0; i < room.service.length; i++) {
+                const checkService = await Service.findOne({ _id: room.service[i], isDeleted: false })
+                if (!checkService) {
+                    return res.json({
+                        status: false,
+                        message: "Service không tồn tại"
+                    })
+                }
+            }
+        }
+        const newroom = new Room(room);
+        await newroom.save();
         return res.json({
-            status: true,
-            Block: newblock
+            status: false,
+            Room: newroom
         })
     } catch(err) {
         return res.json({
@@ -84,7 +95,7 @@ exports.Create = async function(req, res) {
     }
 }
 
-exports.GetAllBlockByAdminId = async function(req, res) {
+exports.GetRoomByBlockId = async function(req, res) {
     if (!req.body) {
         return res.json({
             status: false,
@@ -92,32 +103,82 @@ exports.GetAllBlockByAdminId = async function(req, res) {
         })
     }
     try {
-        const userId = req.body.userId
-        if (!userId) {
+        const room = {
+            name: req.body.name,
+            blockId: req.body.blockId,
+            price: req.body.price,
+            area: req.body.area,
+            device: req.body.device,
+            rooftop: req.body.rooftop,
+            image: req.body.image,
+            service: req.body.service
+        }
+        if (!room.name) {
             return res.json({
                 status: false,
-                message: "UserId is required"
+                message: "Name is required"
             })
         }
-        const checkUserId = await User.findOne({ _id: userId, role: "Admin", isDeleted: false })
-        if (!checkUserId) {
+        if (!room.blockId) {
             return res.json({
                 status: false,
-                message: "UserId không tồn tại hoặc không đủ điều kiện"
+                message: "BlockId is required"
             })
         }
-        const checkBlock = await Block.find({ userId: userId, isDeleted: false })
-        if (!checkBlock || checkBlock == null || checkBlock == '') {
+        const checkBlock = await Block.findOne({ _id: room.blockId })
+        if (!checkBlock) {
             return res.json({
                 status: false,
-                message: "Không tìm thấy Block"
-            })
-        } else {
-            return res.json({
-                status: false,
-                Block: checkBlock
+                message: "Block không tồn tại"
             })
         }
+        if (!room.price) {
+            return res.json({
+                status: false,
+                message: "Price is required"
+            })
+        }
+        if (!room.area) {
+            return res.json({
+                status: false,
+                message: "Area is required"
+            })
+        }
+        if (!room.device) {
+            return res.json({
+                status: false,
+                message: "Device is required"
+            })
+        }
+        if (!room.rooftop) {
+            return res.json({
+                status: false,
+                message: "Rooftop is required"
+            })
+        }
+        if (!room.image) {
+            return res.json({
+                status: false,
+                message: "Image is required"
+            })
+        }
+        if (room.service) {
+            for (let i = 0; i < room.service.length; i++) {
+                const checkService = await Service.findOne({ _id: room.service[i], isDeleted: false })
+                if (!checkService) {
+                    return res.json({
+                        status: false,
+                        message: "Service không tồn tại"
+                    })
+                }
+            }
+        }
+        const newroom = new Room(room);
+        await newroom.save();
+        return res.json({
+            status: false,
+            Room: newroom
+        })
     } catch(err) {
         return res.json({
             status: false,

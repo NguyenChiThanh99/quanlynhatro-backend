@@ -1,5 +1,6 @@
 const User = require('../models/User')
-const Product = require('../models/Block')
+const Block = require('../models/Block')
+const Room = require('../models/Room')
 const bcrypt = require('bcryptjs')
 const mailer = require('../controllers/EmailController')
 const jwt = require('jsonwebtoken')
@@ -30,11 +31,11 @@ exports.Register = async function(req, res) {
             birthday: req.body.birthday ? req.body.birthday : '',
             gender: req.body.gender,
             avatar: req.body.avatar ? req.body.avatar : '',
-            job: req.body.job,
-            startDate: req.body.startDate,
-            price: req.body.price,
-            blocks: req.body.blocks,
-            room: req.body.room
+            job: req.body.job ? req.body.job : '',
+            startDate: req.body.startDate ? req.body.startDate: null,
+            price: req.body.price ? req.body.price: '',
+            block: req.body.block ? req.body.block: null,
+            room: req.body.room ? req.body.room: null
         }
         if (!user.email) {
             return res.json({
@@ -85,44 +86,24 @@ exports.Register = async function(req, res) {
                 message: "Gender is required"
             })
         }
-        if (!user.job) {
-            return res.json({
-                status: false,
-                message: "Job is required"
-            })
+        if (user.block) {
+            const checkBlock = await Block.findOne({ _id: user.block, isDeleted: false })
+            if (!checkBlock) {
+                return res.json({
+                    status: false,
+                    message: "Block Empty"
+                })
+            }
+            if (user.room) {
+                const checkRoom = await Room.findOne({ _id: user.room, blockId: checkBlock._id, isDeleted: false })
+                if (!checkRoom) {
+                    return res.json({
+                        status: false,
+                        message: "Room Empty"
+                    })
+                }
+            }
         }
-        if (!user.startDate) {
-            return res.json({
-                status: false,
-                message: "Start Date is required"
-            })
-        }
-        if (!user.price) {
-            return res.json({
-                status: false,
-                message: "Price is required"
-            })
-        }
-        if (!user.blocks) {
-            return res.json({
-                status: false,
-                message: "Blocks is required"
-            })
-        }
-        if (!user.room) {
-            return res.json({
-                status: false,
-                message: "Room is required"
-            })
-        }
-        const checkBlocks = await Product.findOne({ _id: user.blocks, isDeleted: false, })
-        if (!checkBlocks) {
-            return res.json({
-                status: false,
-                message: "Dãy trọ nhập vào không có trong database"
-            })
-        }
-        
         let random = await Math.random().toString(36).substring(7);
         const newuser = new User(req.body);
         newuser.password = await User.hashPassword(random)

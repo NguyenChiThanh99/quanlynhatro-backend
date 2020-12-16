@@ -48,8 +48,7 @@ var userSchema = new Schema({
         type: Date
     },
     job: {
-        type: String,
-        required: true
+        type: String
     },
     gender: {
         type: String,
@@ -64,20 +63,16 @@ var userSchema = new Schema({
         default: false
     },
     startDate: {
-        type: Date,
-        required: true,
+        type: Date
     },
     price: {
-        type: Number,
-        required: true,
+        type: Number
     },
-    blocks: {
-        type: Schema.Types.ObjectId,
-        required: true,
+    block: {
+        type: Schema.Types.ObjectId
     },
     room: {
-        type: Schema.Types.ObjectId,
-        required: true
+        type: Schema.Types.ObjectId
     },
     isDeleted: {
         type: Boolean,
