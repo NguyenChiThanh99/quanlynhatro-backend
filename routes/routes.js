@@ -13,7 +13,7 @@ router.post('/user/forgetpassword', ForgetPassword)
 router.post('/user/login', Login)
 
 ///BLOCK
-router.post('/block/create', Create)
+router.post('/block/create', authenticateToken, Create)
 router.post('/block/getallblockbyadminid', GetAllBlockByAdminId)
 
 

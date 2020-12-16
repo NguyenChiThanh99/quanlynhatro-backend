@@ -10,8 +10,8 @@ exports.authenticateToken = async function(req, res, next) {
         const jwtuser = await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
         if (!jwtuser) res.status(401).json({status: false, message: 'Unauthorized user!'})
 
-        const user = await User.findOne({ email: jwtuser.email, isDeleted: false });
-        if (!user) res.status(401).json({status: false, message: 'Unauthorized user!'})
+        const user = await User.findOne({ email: jwtuser.user.email, isDeleted: false });
+        if (!user) return res.status(401).json({status: false, message: 'Unauthorized user!'})
         req.user = user;
         next()
     } catch(err) {

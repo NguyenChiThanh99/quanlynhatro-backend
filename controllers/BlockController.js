@@ -97,7 +97,7 @@ exports.GetAllBlockByAdminId = async function(req, res) {
             })
         } else {
             return res.json({
-                status: false,
+                status: true,
                 Block: checkBlock
             })
         }

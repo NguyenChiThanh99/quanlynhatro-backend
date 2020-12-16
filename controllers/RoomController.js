@@ -84,7 +84,7 @@ exports.CreateRoom = async function(req, res) {
         const newroom = new Room(room);
         await newroom.save();
         return res.json({
-            status: false,
+            status: true,
             Room: newroom
         })
     } catch(err) {
