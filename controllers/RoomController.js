@@ -140,3 +140,45 @@ exports.GetRoomByBlockId = async function(req, res) {
         })
     }
 }
+
+exports.DeleteRoom = async function(req, res) {
+    if (!req.body) {
+        return res.json({
+            status: false,
+            message: "Empty Body"
+        })
+    }
+    try {
+        const roomId = req.body.roomId;
+        if (!roomId) {
+            return res.json({
+                status: false,
+                message: "RoomId is required"
+            })
+        }
+        const checkRoom = await Room.findOne({ _id: roomId })
+        if (!checkRoom) {
+            return res.json({
+                status: false,
+                message: "Room không tồn tại"
+            })
+        }
+        const deleteRoom = await Room.updateOne({ _id: roomId }, { $set: { isDeleted: true } })
+        if (!deleteRoom || deleteRoom == null || deleteRoom == '') {
+            return res.json({
+                status: false,
+                message: "Lỗi, Không thể xóa Phòng"
+            })
+        } else {
+            return res.json({
+                status: true,
+                message: "Phòng được xóa thành công"
+            })
+        }
+    } catch(err) {
+        return res.json({
+            status: false,
+            message: err.message
+        })
+    }
+}
