@@ -258,6 +258,7 @@ exports.Login = async function(req, res) {
             password: req.body.password
         }
         console.log(users)
+        console.log(req.body)
         if (!users.email) {
             return res.json({
                 status: false,
