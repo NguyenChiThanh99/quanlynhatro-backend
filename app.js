@@ -23,6 +23,7 @@ app.use(function (req, res, next) {
     next();
 });
 
+app.use(bodyParser());
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(routes);
