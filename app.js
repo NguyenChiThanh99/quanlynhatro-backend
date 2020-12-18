@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const cors = require('cors')
 const mongoose = require('mongoose');
 const routes = require('./routes/routes') 
 
@@ -15,18 +16,10 @@ db.on('error', (err) => {
     console.log('DB connection error:', err.message);
 })
 
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "https://quanlynhatro-online.herokuapp.com"); // update to match the domain you will make the request from
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authentication"
-  );
-  next();
-});
-
 app.use(bodyParser());
 app.use(morgan("dev"));
 app.use(bodyParser.json());
+app.use(cors());
 app.use(routes);
 
 module.exports = app;
