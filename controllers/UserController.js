@@ -194,6 +194,7 @@ exports.ChangePassword = async function(req, res) {
         }
         const hash = await User.hashPassword(users.newpassword);
         checkUser.password = hash;
+        checkUser.firstlogin = true;
         await checkUser.save();
         return res.json({
             status: true,
@@ -237,6 +238,7 @@ exports.ForgetPassword = async function(req, res) {
         }
         let random = await Math.random().toString(36).substring(7);
         checkUser.password = await User.hashPassword(random);
+        checkUser.firstlogin = false;
         await mailer.SendEmailWithForgetPassword(checkUser.email, random);
         await checkUser.save();
         return res.json({
