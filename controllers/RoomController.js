@@ -141,6 +141,57 @@ exports.GetRoomByBlockId = async function(req, res) {
     }
 }
 
+exports.GetAllRoomByUserId = async function(req, res) {
+    if (!req.body) {
+        return res.json({
+            status: false,
+            message: "Empty Body"
+        })
+    }
+    try {
+        const userId = req.body.userId;
+        if (!userId) {
+            return res.json({
+                status: false,
+                message: "UserId is required"
+            })
+        }
+        const checkUser = await User.findOne({ _id: userId, role: "Admin", isDeleted: false })
+        if (!checkUser) {
+            return res.json({
+                status: false,
+                message: "UserId không tồn tại hoặc không đủ điều kiện"
+            })
+        }
+        const checkBlock = await Block.find({ userId: userId, isDeleted: false })
+        if (!checkBlock || checkBlock == '' || checkBlock == null) {
+            return res.json({
+                status: false,
+                message: "Block Empty"
+            })
+        }
+        const checkRoom = await Promise.all(checkBlock.map(async block => {
+            return await Room.find({ blockId: block._id, isDeleted: false })
+        }))
+        if (!checkRoom || checkRoom == '' || checkRoom == null) {
+            return res.json({
+                status: false,
+                message: "Room Empty"
+            })
+        } else {
+            return res.json({
+                status: true,
+                Room: checkRoom
+            })
+        }
+    } catch(err) {
+        return res.json({
+            status: false,
+            message: err.message
+        })
+    }
+}
+
 exports.DeleteRoom = async function(req, res) {
     if (!req.body) {
         return res.json({

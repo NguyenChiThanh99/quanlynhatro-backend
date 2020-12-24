@@ -4,7 +4,7 @@ const {authenticateToken} = require('../controllers/AuthController')
 const {Register, ChangePassword, ForgetPassword, Login} = require('../controllers/UserController')
 const {Create, GetAllBlockByAdminId} = require('../controllers/BlockController')
 const {CreateService, getServiceByAdminId} = require('../controllers/ServiceController')
-const {CreateRoom, GetRoomByBlockId, DeleteRoom} = require('../controllers/RoomController')
+const {CreateRoom, GetRoomByBlockId, DeleteRoom, GetAllRoomByUserId} = require('../controllers/RoomController')
 
 ///USER
 router.post('/user/register', Register)
@@ -25,4 +25,5 @@ router.post('/service/getservicebyadminid', authenticateToken, getServiceByAdmin
 router.post('/room/create', authenticateToken, CreateRoom)
 router.post('/room/getroombyblockid', authenticateToken, GetRoomByBlockId)
 router.post('/room/deleteroom', authenticateToken, DeleteRoom)
+router.post('/room/getallroombyuserid', authenticateToken, GetAllRoomByUserId)
 module.exports = router;
