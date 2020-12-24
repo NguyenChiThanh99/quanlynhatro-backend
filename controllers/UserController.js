@@ -326,7 +326,25 @@ exports.GetAllUserByRoomId = async function(req, res) {
                 message: "RoomId is required"
             })
         }
-        
+        const checkRoom = await Room.findOne({ _id: roomId, isDeleted: false })
+        if (!checkRoom) {
+            return res.json({
+                status: false,
+                message: "Phòng không có sẳn"
+            })
+        }
+        const checkUser = await User.find({ room: roomId, isDeleted: false })
+        if (!checkUser || checkUser == '' || checkUser == null) {
+            return res.json({
+                status: false,
+                message: "Không có người thuê phòng này"
+            })
+        } else {
+            return res.json({
+                status: false,
+                User: checkUser
+            })
+        }
     } catch(err) {
         return res.json({
             status: false,
