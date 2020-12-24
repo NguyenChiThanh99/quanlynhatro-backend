@@ -233,3 +233,104 @@ exports.DeleteRoom = async function(req, res) {
         })
     }
 }
+
+exports.UpdateRoom = async function(req, res) {
+    if (!req.body) {
+        return res.json({
+            status: false,
+            message: "Empty Body"
+        })
+    }
+    try {
+        const room = {
+            roomId: req.body.roomId,
+            name: req.body.name,
+            blockId: req.body.blockId,
+            price: req.body.price,
+            area: req.body.area,
+            device: req.body.device,
+            rooftop: req.body.rooftop,
+            image: req.body.image
+        }
+        if (!room.name) {
+            return res.json({
+                status: false,
+                message: "Name is required"
+            })
+        }
+        if (!room.blockId) {
+            return res.json({
+                status: false,
+                message: "BlockId is required"
+            })
+        }
+        const checkBlock = await Block.findOne({ _id: room.blockId, isDeleted: false })
+        if (!checkBlock) {
+            return res.json({
+                status: false,
+                message: "Block không tồn tại"
+            })
+        }
+        if (!room.price) {
+            return res.json({
+                status: false,
+                message: "Price is required"
+            })
+        }
+        if (!room.area) {
+            return res.json({
+                status: false,
+                message: "Area is required"
+            })
+        }
+        if (!room.device) {
+            return res.json({
+                status: false,
+                message: "Device is required"
+            })
+        }
+        if (!room.rooftop) {
+            return res.json({
+                status: false,
+                message: "Rooftop is required"
+            })
+        }
+        if (!room.image) {
+            return res.json({
+                status: false,
+                message: "Image is required"
+            })
+        }
+        if (!room.roomId) {
+            return res.json({
+                status: false,
+                message: "RoomId is required"
+            })
+        }
+        const checkRoom = await Room.findOne({ _id: room.roomId, isDeleted: false })
+        if (!checkRoom) {
+            return res.json({
+                status: false,
+                message: "Phòng không tồn tại"
+            })
+        } else {
+            checkRoom.name = room.name;
+            checkRoom.blockId = room.blockId;
+            checkRoom.price = room.price;
+            checkRoom.area = room.area;
+            checkRoom.device = room.device;
+            checkRoom.rooftop = room.rooftop;
+            checkRoom.image = room.image;
+            await checkRoom.save();
+            return res.json({
+                status: true,
+                Room: checkRoom
+            })
+        }
+    } catch(err) {
+        return res.json({
+            status: false,
+            message: err.message
+        })
+    }
+}
