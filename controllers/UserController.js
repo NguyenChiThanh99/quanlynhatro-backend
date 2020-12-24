@@ -352,3 +352,38 @@ exports.GetAllUserByRoomId = async function(req, res) {
         })
     }
 }
+
+exports.GetUserById = async function(req, res) {
+    if (!req.body) {
+        return res.json({
+            status: false,
+            message: "Empty Body"
+        })
+    }
+    try {
+        const userId = req.body.userId;
+        if (!userId) {
+            return res.json({
+                status: false,
+                message: "UserId is required"
+            })
+        }
+        const checkUser = await User.findOne({ _id: userId, isDeleted: false }).populate(['room', 'block'])
+        if (!checkUser || checkUser == '' || checkUser == null) {
+            return res.json({
+                status: false,
+                message: "User không đúng"
+            })
+        } else {
+            return res.json({
+                status: false,
+                User: checkUser
+            })
+        }
+    } catch(err) {
+        return res.json({
+            status: false,
+            message: err.message
+        })
+    }
+}

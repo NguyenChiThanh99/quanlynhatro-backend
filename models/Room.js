@@ -10,6 +10,7 @@ var roomSchema = new Schema({
     },
     blockId: {
         type: Schema.Types.ObjectId,
+        ref: 'Block',
         required: true,
         trim: true
     },
@@ -36,6 +37,7 @@ var roomSchema = new Schema({
     },
     service: {
         type: [Schema.Types.ObjectId],
+        ref: 'Service',
         default: undefined
     },
     isDeleted: {

@@ -69,10 +69,12 @@ var userSchema = new Schema({
         type: Number
     },
     block: {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'Block'
     },
     room: {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'Room'
     },
     isDeleted: {
         type: Boolean,
