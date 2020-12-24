@@ -179,9 +179,16 @@ exports.GetAllRoomByUserId = async function(req, res) {
                 message: "Room Empty"
             })
         } else {
+            const person = await Promise.all(checkRoom.map(async room => {
+                const newperson = await Promise.all(room.map(async newroom => {
+                    return await User.find({ room: newroom._id, block: newroom.blockId, isDeleted: false }).countDocuments();
+                }))
+                return newperson;
+            }))
             return res.json({
                 status: true,
-                Room: checkRoom
+                Room: checkRoom,
+                Person: person
             })
         }
     } catch(err) {

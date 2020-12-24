@@ -254,6 +254,12 @@ exports.ForgetPassword = async function(req, res) {
 }
 
 exports.Login = async function(req, res) {
+    if (!req.body) {
+        return res.json({
+            status: false,
+            message: "Empty Body"
+        })
+    }
     try {
         const users = {
             email : req.body.email,
@@ -297,6 +303,30 @@ exports.Login = async function(req, res) {
             user: checkuser,
             token: token
         })
+    } catch(err) {
+        return res.json({
+            status: false,
+            message: err.message
+        })
+    }
+}
+
+exports.GetAllUserByRoomId = async function(req, res) {
+    if (!req.body) {
+        return res.json({
+            status: false,
+            message: "Empty Body"
+        })
+    }
+    try {
+        const roomId = req.body.roomId;
+        if (!roomId) {
+            return res.json({
+                status: false,
+                message: "RoomId is required"
+            })
+        }
+        
     } catch(err) {
         return res.json({
             status: false,
