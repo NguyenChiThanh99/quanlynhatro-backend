@@ -387,3 +387,44 @@ exports.GetUserById = async function(req, res) {
         })
     }
 }
+
+exports.GetCustomerByEmail = async function(req, res) {
+    if (!req.body) {
+        return res.json({
+            status: false,
+            message: "Empty Body"
+        })
+    }
+    try {
+        const email = req.body.email;
+        if (!email) {
+            return res.json({
+                status: false,
+                message: "Email is required"
+            })
+        }
+        if (email && !validateEmail(email)) {
+            return res.json({
+                status: false,
+                message: "Email is not correct format"
+            })
+        }
+        const checkUser = await User.findOne({ email: email, isDeleted: false, role: "User" }).populate(['room', 'block'])
+        if (!checkUser || checkUser == '' || checkUser == null) {
+            return res.json({
+                status: false,
+                message: "User không đúng"
+            })
+        } else {
+            return res.json({
+                status: false,
+                User: checkUser
+            })
+        }
+    } catch(err) {
+        return res.json({
+            status: false,
+            message: err.message
+        })
+    }
+}
