@@ -341,7 +341,7 @@ exports.GetAllUserByRoomId = async function(req, res) {
             })
         } else {
             return res.json({
-                status: false,
+                status: true,
                 User: checkUser
             })
         }
@@ -382,7 +382,7 @@ exports.GetUserByEmail = async function(req, res) {
             })
         } else {
             return res.json({
-                status: false,
+                status: true,
                 User: checkUser
             })
         }
@@ -409,7 +409,29 @@ exports.GetUserByAdminId = async function(req, res) {
                 message: "UserId is required"
             })
         }
-
+        const checkUser = await User.findOne({ _id: userId, isDeleted: false, role: "Admin" })
+        if (!checkUser || checkUser == '' || checkUser == null) {
+            return res.json({
+                status: false,
+                message: "User không đúng"
+            })
+        } else {
+            const checkBlock = await Block.find({ userId: checkUser._id, isDeleted: false })
+            if (!checkBlock || checkBlock == '' || checkBlock == null) {
+                return res.json({
+                    status: false,
+                    message: "Không có người thuê nào"
+                })
+            } else {
+                const userblock = await Promise.all(checkBlock.map(async block => {
+                    return await User.find({ block: block._id, role: "User", isDeleted: false })
+                }))
+                return res.json({
+                    status: true,
+                    User: userblock
+                })
+            }
+        }
     } catch(err) {
         return res.json({
             status: false,
