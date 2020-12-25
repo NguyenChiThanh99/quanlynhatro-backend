@@ -87,3 +87,45 @@ exports.GetRequestByUserId = async function(req, res) {
         })
     }
 }
+
+exports.UpdateRequest = async function(req, res) {
+    if (!req.body) {
+        return res.json({
+            status: false,
+            message: "Empty Body"
+        })
+    }
+    try {
+        const request = {
+            requestId: req.body.requestId,
+            note: req.body.note ? req.body.note : '',
+            isSolved: req.body.isSolved ? req.body.isSolved : ''
+        }
+        if (!request.requestId) {
+            return res.json({
+                status: false,
+                message: "RequestId is required"
+            })
+        }
+        const checkRequest = await Request.findOne({ _id: request.requestId, isDeleted: false })
+        if (!checkRequest || checkRequest == '' || checkRequest == null) {
+            return res.json({
+                status: false,
+                message: "Không tìm thấy yêu cầu"
+            })
+        } else {
+            if (request.note != '') checkRequest.note = request.note;
+            if (request.isSolved != '') checkRequest.isSolved = request.isSolved;
+            checkRequest.save();
+            return res.json({
+                status: true,
+                Request: checkRequest
+            })
+        }
+    } catch(err) {
+        return res.json({
+            status: false,
+            message: err.message
+        })
+    }
+}
