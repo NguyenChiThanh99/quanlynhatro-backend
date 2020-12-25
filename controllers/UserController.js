@@ -449,7 +449,7 @@ exports.UpdateCustomer = async function(req, res) {
     }
     try {
         const userupdate = {
-            email: req.body.email,
+            userId: req.body.userId,
             name: req.body.name,
             phone: req.body.phone,
             address: req.body.address,
@@ -458,87 +458,99 @@ exports.UpdateCustomer = async function(req, res) {
             gender: req.body.gender,
             job: req.body.job
         }
-        if (!userupdate.email) {
-            return res.json({
-                status: false,
-                message: "Email is required"
-            })
-        }
-        if (userupdate.email && !validateEmail(userupdate.email)) {
-            return res.json({
-                status: false,
-                message: "Email is not correct format"
-            })
-        }
-        const checkEmail = await User.findOne({ email: user.email }) 
-        if (checkEmail) {
-            return res.json({
-                status: false,
-                message: 'Email đã được sử dụng'
-            })
-        }      
-        if (!user.name) {
+        if (!userupdate.name) {
             return res.json({
                 status: false,
                 message: "Name is required"
             })
         }
-        if (!user.phone) {
+        if (!userupdate.phone) {
             return res.json({
                 status: false,
                 message: "Phone is required"
             })
         }
-        if (!user.address) {
+        if (!userupdate.address) {
             return res.json({
                 status: false,
                 message: "Phone is required"
             })
         }
-        if (!user.cmnd) {
+        if (!userupdate.cmnd) {
             return res.json({
                 status: false,
                 message: "CMND is required"
             })
         }
-        if (!user.gender) {
+        if (!userupdate.gender) {
             return res.json({
                 status: false,
                 message: "Gender is required"
             })
         }
-        if (user.block) {
-            const checkBlock = await Block.findOne({ _id: user.block, isDeleted: false })
-            if (!checkBlock) {
-                return res.json({
-                    status: false,
-                    message: "Block Empty"
-                })
-            }
-            if (user.room) {
-                const checkRoom = await Room.findOne({ _id: user.room, blockId: checkBlock._id, isDeleted: false })
-                if (!checkRoom) {
-                    return res.json({
-                        status: false,
-                        message: "Room Empty"
-                    })
-                }
-            }
-        }
-        let random = await Math.random().toString(36).substring(7);
-        const newuser = new User(req.body);
-        newuser.password = await User.hashPassword(random)
-        await mailer.SendEmailWithRegister(user.email, random);
-        const issave = await newuser.save();
-        if (issave) {
-            return res.json({
-                status: true,
-                user: newuser
-            })
-        } else {
+        if (!userupdate.job) {
             return res.json({
                 status: false,
-                message: 'Lỗi không tạo được User'
+                message: "Job is required"
+            })
+        }
+        const checkUser = await User.findOne({ _id: userupdate.userId, isDeleted: false, role: "User" })
+        if (!checkUser || checkUser == '' || checkUser == null) {
+            return res.json({
+                status: false,
+                message: "User không tồn tại"
+            })
+        } else {
+            checkUser.name = userupdate.name;
+            checkUser.phone = userupdate.phone;
+            checkUser.address = userupdate.address;
+            checkUser.cmnd = userupdate.cmnd;
+            checkUser.gender = userupdate.gender;
+            checkUser.job = userupdate.job;
+            checkUser.save();
+            return res.json({
+                status: true,
+                User: checkUser
+            })
+        }
+    } catch(err) {
+        return res.json({
+            status: false,
+            message: err.message
+        })
+    }
+}
+
+exports.UpdateAvatarCustomer = async function(req, res) {
+    if (!req.body) {
+        return res.json({
+            status: false,
+            message: "Empty Body"
+        })
+    }
+    try {
+        const updateavatar = {
+            userId: req.body.userId,
+            avatar: req.body.avatar
+        }
+        if (!updateavatar.avatar) {
+            return res.json({
+                status: false,
+                message: "Avatar is required"
+            })
+        }
+        const checkUser = await User.findOne({ _id: updateavatar.userId, isDeleted: false, role: "User" })
+        if (!checkUser || checkUser == '' || checkUser == null) {
+            return res.json({
+                status: false,
+                message: "User không tồn tại"
+            })
+        } else {
+            checkUser.avatar = updateavatar.avatar;
+            checkUser.save();
+            return res.json({
+                status: true,
+                User: checkUser
             })
         }
     } catch(err) {
