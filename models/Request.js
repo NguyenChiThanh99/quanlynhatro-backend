@@ -15,7 +15,7 @@ var requestSchema = new Schema({
         type: String,
         default: ''
     },
-    isSolve: {
+    isSolved: {
         type: Boolean,
         default: false,
     },
