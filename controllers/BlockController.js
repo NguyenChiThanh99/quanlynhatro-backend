@@ -1,4 +1,5 @@
 const Block = require('../models/Block')
+const Room = require('../models/Room')
 const User = require('../models/User')
 
 exports.Create = async function(req, res) {
@@ -96,9 +97,13 @@ exports.GetAllBlockByAdminId = async function(req, res) {
                 message: "Không tìm thấy Block"
             })
         } else {
+            const countroom = await Promise.all(checkBlock.map(async block => {
+                return await Room.find({ blockId: block._id, isDeleted: false }).countDocuments();
+            }))
             return res.json({
                 status: true,
-                Block: checkBlock
+                Block: checkBlock,
+                Room: countroom
             })
         }
     } catch(err) {
