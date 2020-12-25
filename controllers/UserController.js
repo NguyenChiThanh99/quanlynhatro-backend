@@ -353,42 +353,7 @@ exports.GetAllUserByRoomId = async function(req, res) {
     }
 }
 
-exports.GetUserById = async function(req, res) {
-    if (!req.body) {
-        return res.json({
-            status: false,
-            message: "Empty Body"
-        })
-    }
-    try {
-        const userId = req.body.userId;
-        if (!userId) {
-            return res.json({
-                status: false,
-                message: "UserId is required"
-            })
-        }
-        const checkUser = await User.findOne({ _id: userId, isDeleted: false }).populate(['room', 'block'])
-        if (!checkUser || checkUser == '' || checkUser == null) {
-            return res.json({
-                status: false,
-                message: "User không đúng"
-            })
-        } else {
-            return res.json({
-                status: false,
-                User: checkUser
-            })
-        }
-    } catch(err) {
-        return res.json({
-            status: false,
-            message: err.message
-        })
-    }
-}
-
-exports.GetCustomerByEmail = async function(req, res) {
+exports.GetUserByEmail = async function(req, res) {
     if (!req.body) {
         return res.json({
             status: false,
@@ -409,7 +374,7 @@ exports.GetCustomerByEmail = async function(req, res) {
                 message: "Email is not correct format"
             })
         }
-        const checkUser = await User.findOne({ email: email, isDeleted: false, role: "User" }).populate(['room', 'block'])
+        const checkUser = await User.findOne({ email: email, isDeleted: false }).populate(['room', 'block'])
         if (!checkUser || checkUser == '' || checkUser == null) {
             return res.json({
                 status: false,
@@ -419,6 +384,115 @@ exports.GetCustomerByEmail = async function(req, res) {
             return res.json({
                 status: false,
                 User: checkUser
+            })
+        }
+    } catch(err) {
+        return res.json({
+            status: false,
+            message: err.message
+        })
+    }
+}
+
+exports.UpdateCustomer = async function(req, res) {
+    if (!req.body) {
+        return res.json({
+            status: false,
+            message: "Empty Body"
+        })
+    }
+    try {
+        const userupdate = {
+            email: req.body.email,
+            name: req.body.name,
+            phone: req.body.phone,
+            address: req.body.address,
+            cmnd: req.body.cmnd,
+            birthday: req.body.birthday,
+            gender: req.body.gender,
+            job: req.body.job
+        }
+        if (!userupdate.email) {
+            return res.json({
+                status: false,
+                message: "Email is required"
+            })
+        }
+        if (userupdate.email && !validateEmail(userupdate.email)) {
+            return res.json({
+                status: false,
+                message: "Email is not correct format"
+            })
+        }
+        const checkEmail = await User.findOne({ email: user.email }) 
+        if (checkEmail) {
+            return res.json({
+                status: false,
+                message: 'Email đã được sử dụng'
+            })
+        }      
+        if (!user.name) {
+            return res.json({
+                status: false,
+                message: "Name is required"
+            })
+        }
+        if (!user.phone) {
+            return res.json({
+                status: false,
+                message: "Phone is required"
+            })
+        }
+        if (!user.address) {
+            return res.json({
+                status: false,
+                message: "Phone is required"
+            })
+        }
+        if (!user.cmnd) {
+            return res.json({
+                status: false,
+                message: "CMND is required"
+            })
+        }
+        if (!user.gender) {
+            return res.json({
+                status: false,
+                message: "Gender is required"
+            })
+        }
+        if (user.block) {
+            const checkBlock = await Block.findOne({ _id: user.block, isDeleted: false })
+            if (!checkBlock) {
+                return res.json({
+                    status: false,
+                    message: "Block Empty"
+                })
+            }
+            if (user.room) {
+                const checkRoom = await Room.findOne({ _id: user.room, blockId: checkBlock._id, isDeleted: false })
+                if (!checkRoom) {
+                    return res.json({
+                        status: false,
+                        message: "Room Empty"
+                    })
+                }
+            }
+        }
+        let random = await Math.random().toString(36).substring(7);
+        const newuser = new User(req.body);
+        newuser.password = await User.hashPassword(random)
+        await mailer.SendEmailWithRegister(user.email, random);
+        const issave = await newuser.save();
+        if (issave) {
+            return res.json({
+                status: true,
+                user: newuser
+            })
+        } else {
+            return res.json({
+                status: false,
+                message: 'Lỗi không tạo được User'
             })
         }
     } catch(err) {
