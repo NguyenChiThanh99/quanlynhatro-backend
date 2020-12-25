@@ -333,7 +333,7 @@ exports.GetAllUserByRoomId = async function(req, res) {
                 message: "Phòng không có sẳn"
             })
         }
-        const checkUser = await User.find({ room: roomId, isDeleted: false })
+        const checkUser = await User.find({ room: roomId, isDeleted: false }).populate(['room', 'block'])
         if (!checkUser || checkUser == '' || checkUser == null) {
             return res.json({
                 status: false,
@@ -386,6 +386,30 @@ exports.GetUserByEmail = async function(req, res) {
                 User: checkUser
             })
         }
+    } catch(err) {
+        return res.json({
+            status: false,
+            message: err.message
+        })
+    }
+}
+
+exports.GetUserByAdminId = async function(req, res) {
+    if (!req.body) {
+        return res.json({
+            status: false,
+            message: "Empty Body"
+        })
+    }
+    try {
+        const userId = req.body.userId;
+        if (!userId) {
+            return res.json({
+                status: false,
+                message: "UserId is required"
+            })
+        }
+
     } catch(err) {
         return res.json({
             status: false,
