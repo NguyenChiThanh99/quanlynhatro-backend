@@ -113,3 +113,46 @@ exports.GetAllBlockByAdminId = async function(req, res) {
         })
     }
 }
+
+exports.GetBlockByRoomId = async function(req, res) {
+    if (!req.body) {
+        return res.json({
+            status: false,
+            message: "Empty Body"
+        })
+    }
+    try {
+        const roomId = req.body.roomId
+        if (!roomId) {
+            return res.json({
+                status: false,
+                message: "RoomId is required"
+            })
+        }
+        const checkRoom = await Room.findOne({ _id: roomId, isDeleted: false })
+        if (!checkRoom || checkRoom == null || checkRoom == '') {
+            return res.json({
+                status: false,
+                message: "Không tìm thấy Room"
+            })
+        } else {
+            const checkBlock = await Block.findOne({ _id: checkRoom.blockId, isDeleted: false })
+            if (!checkBlock || checkBlock == null || checkBlock == '') {
+                return res.json({
+                    status: false,
+                    message: "Không tìm thấy Block"
+                })
+            } else {
+                return res.json({
+                    status: true,
+                    Block: checkBlock
+                })
+            }
+        }
+    } catch(err) {
+        return res.json({
+            status: false,
+            message: err.message
+        })
+    }
+}
