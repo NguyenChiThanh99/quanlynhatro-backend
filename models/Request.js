@@ -7,6 +7,11 @@ var requestSchema = new Schema({
         ref: 'User',
         required: true
     },
+    blockId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Block',
+        required: true
+    },
     content: {
         type: String,
         required: true,

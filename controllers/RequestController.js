@@ -1,4 +1,5 @@
 const Request = require('../models/Request')
+const Block = require('../models/Block')
 const User = require('../models/User')
 
 exports.CreateRequest = async function(req, res) {
@@ -11,7 +12,8 @@ exports.CreateRequest = async function(req, res) {
     try {
         const request = {
             userId: req.body.userId,
-            content: req.body.content
+            content: req.body.content,
+            blockId: req.body.blockId
         }
         if (!request.content) {
             return res.json({
@@ -25,7 +27,14 @@ exports.CreateRequest = async function(req, res) {
                 message: "UserId is required"
             })
         }
-        const checkUser = await User.findOne({ _id: request.userId, role: "User", isDeleted: false })
+        const checkBlock = await Block.findOne({ _id: request.blockId, isDeleted: false})
+        if (!checkBlock) {
+            return res.json({
+                status: false,
+                message: "Block không tồn tại"
+            })
+        }
+        const checkUser = await User.findOne({ _id: request.userId, role: "User", isDeleted: false, block: checkBlock._id })
         if (!checkUser) {
             return res.json({
                 status: false,
