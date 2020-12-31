@@ -257,7 +257,8 @@ exports.UpdateRoom = async function(req, res) {
             area: req.body.area,
             device: req.body.device,
             rooftop: req.body.rooftop,
-            image: req.body.image
+            image: req.body.image,
+            service: req.body.service
         }
         if (!room.name) {
             return res.json({
@@ -314,6 +315,17 @@ exports.UpdateRoom = async function(req, res) {
                 message: "RoomId is required"
             })
         }
+        if (room.service) {
+            for (let i = 0; i < room.service.length; i++) {
+                const checkService = await Service.findOne({ _id: room.service[i], isDeleted: false })
+                if (!checkService) {
+                    return res.json({
+                        status: false,
+                        message: "Service không tồn tại"
+                    })
+                }
+            }
+        }
         const checkRoom = await Room.findOne({ _id: room.roomId, isDeleted: false })
         if (!checkRoom) {
             return res.json({
@@ -328,6 +340,7 @@ exports.UpdateRoom = async function(req, res) {
             checkRoom.device = room.device;
             checkRoom.rooftop = room.rooftop;
             checkRoom.image = room.image;
+            checkRoom.service = room.service;
             await checkRoom.save();
             return res.json({
                 status: true,
