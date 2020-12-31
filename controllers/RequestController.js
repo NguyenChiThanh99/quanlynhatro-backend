@@ -97,6 +97,57 @@ exports.GetRequestByUserId = async function(req, res) {
     }
 }
 
+exports.GetRequestByAdminId = async function(req, res) {
+    if (!req.body) {
+        return res.json({
+            status: false,
+            message: "Empty Body"
+        })
+    }
+    try {
+        const userId = req.body.userId;
+        if (!userId) {
+            return res.json({
+                status: false,
+                message: "UserId is required"
+            })
+        }
+        const checkUser = await User.findOne({ _id: userId, role: "Admin", isDeleted: false })
+        if (!checkUser) {
+            return res.json({
+                status: false,
+                message: "User không tồn tại"
+            })
+        }
+        const checkBlock = await Block.find({ userId: userId, isDeleted: false })
+        if (!checkBlock) {
+            return res.json({
+                status: false,
+                message: "Block không tồn tại"
+            })
+        }
+        const checkRequest = await Promise.all(checkBlock.map(async block => {
+            return await Request.find({ blockId: block._id, isDeleted: false })
+        }))
+        if (!checkRequest || checkRequest == '' || checkRequest == null) {
+            return res.json({
+                status: false,
+                message: "Không tìm thấy yêu cầu"
+            })
+        } else {
+            return res.json({
+                status: true,
+                Request: checkRequest
+            })
+        }
+    } catch(err) {
+        return res.json({
+            status: false,
+            message: err.message
+        })
+    }
+}
+
 exports.UpdateRequest = async function(req, res) {
     if (!req.body) {
         return res.json({
