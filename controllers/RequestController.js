@@ -1,5 +1,6 @@
 const Request = require('../models/Request')
 const Block = require('../models/Block')
+const Room = require('../models/Room')
 const User = require('../models/User')
 
 exports.CreateRequest = async function(req, res) {
@@ -127,7 +128,13 @@ exports.GetRequestByAdminId = async function(req, res) {
             })
         }
         const checkRequest = await Promise.all(checkBlock.map(async block => {
-            return await Request.find({ blockId: block._id, isDeleted: false })
+            let newRequest = await Request.find({ blockId: block._id, isDeleted: false }).populate('userId')
+            newRequest = await Promise.all(newRequest.map(async request => {
+                const room = await Room.findOne({ _id: request.userId.room });
+                request.userId.room = room;
+                return request
+            }))
+            return newRequest
         }))
         if (!checkRequest || checkRequest == '' || checkRequest == null) {
             return res.json({
