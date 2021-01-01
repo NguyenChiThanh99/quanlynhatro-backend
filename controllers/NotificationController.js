@@ -109,3 +109,67 @@ exports.GetAllNotiByAdminId = async function(req, res) {
         })
     }
 }
+
+exports.GetNotiByBlockAndRoomId = async function(req, res) {
+    if (!req.body) {
+        return res.json({
+            status: false,
+            message: "Empty Body"
+        })
+    }
+    try {
+        const blockId = req.body.blockId;
+        const roomId = req.body.roomId;
+        if (!blockId) {
+            return res.json({
+                status: false,
+                message: "BlockId is required"
+            })
+        }
+        if (!roomId) {
+            return res.json({
+                status: false,
+                message: "RoomId is required"
+            })
+        }
+        const checkRoom = await Room.findOne({ _id: roomId, isDeleted: false})
+        if (!checkRoom) {
+            return res.json({
+                status: false,
+                message: "RoomId không tồn tại"
+            })
+        }
+        const checkBlock = await Block.findOne({ _id: blockId, isDeleted: false})
+        if (!checkBlock) {
+            return res.json({
+                status: false,
+                message: "BlockId không tồn tại"
+            })
+        }
+        let checkNotiAll = await Notification.find({ type: "All", isDeleted: false })
+        const checkNotiRoom = await Notification.find({ type: "Room", deliveryId: roomId, isDeleted: false })
+        if (checkNotiRoom.length != 0) {
+            checkNotiAll = checkNotiAll.concat(checkNotiRoom)
+        }
+        const checkNotiBlock = await Notification.find({ type: "Block", deliveryId: blockId, isDeleted: false })
+        if (checkNotiBlock.length != 0) {
+            checkNotiAll = checkNotiAll.concat(checkBlock)
+        }
+        if (!checkNotiAll || checkNotiAll == '' || checkNotiAll == null) {
+            return res.json({
+                status: false,
+                message: "Lỗi... Không có thông báo"
+            })
+        } else {
+            return res.json({
+                status: true,
+                Notification: checkNotiAll
+            })
+        }
+    } catch(err) {
+        return res.json({
+            status: false,
+            message: err.message
+        })
+    }
+}

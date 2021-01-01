@@ -6,7 +6,7 @@ const {Create, GetAllBlockByAdminId, GetBlockByRoomId} = require('../controllers
 const {CreateService, getServiceByAdminId} = require('../controllers/ServiceController')
 const {CreateRoom, GetRoomByBlockId, DeleteRoom, GetAllRoomByUserId, UpdateRoom} = require('../controllers/RoomController')
 const {CreateRequest, GetRequestByUserId, UpdateRequest, GetRequestByAdminId} = require('../controllers/RequestController')
-const {CreateNotification, GetAllNotiByAdminId} = require('../controllers/NotificationController')
+const {CreateNotification, GetAllNotiByAdminId, GetNotiByBlockAndRoomId} = require('../controllers/NotificationController')
 
 ///USER
 router.post('/user/register', Register)
@@ -46,4 +46,5 @@ router.post('/request/updaterequest', authenticateToken, UpdateRequest)
 //NOTIFICATION
 router.post('/notification/create', authenticateToken, CreateNotification)
 router.post('/notification/getnotibyadminid', authenticateToken, GetAllNotiByAdminId)
+router.post('/notification/getnotibyblockandroomid', GetNotiByBlockAndRoomId)
 module.exports = router;
