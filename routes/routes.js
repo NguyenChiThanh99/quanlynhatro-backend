@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const {authenticateToken} = require('../controllers/AuthController')
-const {Register, ChangePassword, ForgetPassword, Login, GetAllUserByRoomId, GetUserByEmail, UpdateCustomer, GetUserByAdminId, UpdateAvatarCustomer} = require('../controllers/UserController')
+const {Register, ChangePassword, ForgetPassword, Login, GetAllUserByRoomId, GetUserByEmail, UpdateCustomer, GetUserByAdminId, UpdateAvatarCustomer, DeletedUser} = require('../controllers/UserController')
 const {Create, GetAllBlockByAdminId, GetBlockByRoomId} = require('../controllers/BlockController')
 const {CreateService, getServiceByAdminId} = require('../controllers/ServiceController')
 const {CreateRoom, GetRoomByBlockId, DeleteRoom, GetAllRoomByUserId, UpdateRoom} = require('../controllers/RoomController')
@@ -17,6 +17,7 @@ router.post('/user/getuserbyemail', authenticateToken, GetUserByEmail)
 router.post('/user/updatecustomer', authenticateToken, UpdateCustomer)
 router.post('/user/updateavatarcustomer', authenticateToken, UpdateAvatarCustomer)
 router.post('/user/getuserbyadminid', authenticateToken, GetUserByAdminId)
+router.post('/user/deleteuser', authenticateToken, DeletedUser)
 
 ///BLOCK
 router.post('/block/create', authenticateToken, Create)

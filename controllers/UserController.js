@@ -560,3 +560,40 @@ exports.UpdateAvatarCustomer = async function(req, res) {
         })
     }
 }
+
+exports.DeletedUser = async function(req, res) {
+    if (!req.body) {
+        return res.json({
+            status: false,
+            message: "Empty Body"
+        })
+    }
+    try {
+        const userId = req.body.userId;
+        if (!userId) {
+            return res.json({
+                status: false,
+                message: "UserId is required"
+            })
+        }
+        const checkUser = await User.findOne({ _id: userId, isDeleted: false, role: "User" })
+        if (!checkUser || checkUser == '' || checkUser == null) {
+            return res.json({
+                status: false,
+                message: "User không đúng"
+            })
+        } else {
+            checkUser.isDeleted = true;
+            await checkUser.save();
+            return res.json({
+                status: true,
+                message: "Đã xóa User thành công"
+            })
+        }
+    } catch(err) {
+        return res.json({
+            status: false,
+            message: err.message
+        })
+    }  
+}
