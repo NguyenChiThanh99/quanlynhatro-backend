@@ -54,5 +54,5 @@ router.post('/notification/getnotibyblockandroomid', authenticateToken, GetNotiB
 //PAYMENT
 router.post('/payment/create', authenticateToken, CreatePayment)
 router.post('/payment/getpaymentbyblockid', authenticateToken, GetPaymentByBlockId)
-router.post('/payment/changestatuspayment', ChangeStatusPayment)
+router.post('/payment/changestatuspayment', authenticateToken, ChangeStatusPayment)
 module.exports = router;
