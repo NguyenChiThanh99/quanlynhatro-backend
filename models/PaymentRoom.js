@@ -7,7 +7,7 @@ var requestSchema = new Schema({
         ref: 'Room'
     },
     service: [{
-        type: Array
+        type: String
     }],
     elec: {
         type: Array

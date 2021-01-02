@@ -106,7 +106,8 @@ exports.CreatePayment = async function(req, res) {
         await newpayment.save();
         return res.json({
             status: true,
-            message: "Payment đã được tạo thành công"
+            message: "Payment đã được tạo thành công",
+            Payment: newpayment
         })
     } catch(err) {
         return res.json({
@@ -114,4 +115,8 @@ exports.CreatePayment = async function(req, res) {
             message: err.message
         })
     }
+}
+
+exports.GetPaymentByBlockId = async function(req, res) {
+
 }
