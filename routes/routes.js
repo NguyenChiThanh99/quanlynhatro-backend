@@ -30,7 +30,7 @@ router.post('/block/getblockbyroomid', authenticateToken, GetBlockByRoomId)
 router.post('/service/create', authenticateToken, CreateService)
 router.post('/service/getservicebyadminid', authenticateToken, getServiceByAdminId)
 router.post('/service/updateservice', authenticateToken, UpdateService)
-router.post('/service/getservicebyblockid', GetServiceByBlockId)
+router.post('/service/getservicebyblockid', authenticateToken, GetServiceByBlockId)
 
 ///ROOM
 router.post('/room/create', authenticateToken, CreateRoom)
