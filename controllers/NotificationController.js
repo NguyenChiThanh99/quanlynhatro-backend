@@ -90,16 +90,31 @@ exports.GetAllNotiByAdminId = async function(req, res) {
                 message: "UserId không tồn tại"
             })
         }
-        let checkNoti = await Notification.find({ userId: userId, isDeleted: false })
+        const checkNoti = await Notification.find({ userId: userId, isDeleted: false })
         if (!checkNoti || checkNoti == '' || checkNoti == null) {
             return res.json({
                 status: false,
                 message: "Lỗi...Không có thông báo"
             })
         } else {
+            const nameNoti = []
+            for (let index = 0; index < checkNoti.length; index++) {
+                if (checkNoti[index].type == "Room") {
+                    const checkRoom = await Room.findOne({ _id: checkNoti[index].deliveryId }).select({ name: 1, _id: 0 })
+                    nameNoti.push(checkRoom)
+                }
+                if (checkNoti[index].type == "Block") {
+                    const checkBlock = await Block.findOne({ _id: checkNoti[index].deliveryId }).select({ name: 1, _id: 0 })
+                    nameNoti.push(checkBlock)
+                }
+                if (checkNoti[index].type == "All") {
+                    nameNoti.push(null)
+                }
+            }
             return res.json({
                 status: true,
-                Notification: checkNoti
+                Notification: checkNoti,
+                Name: nameNoti
             })
         }
     } catch(err) {

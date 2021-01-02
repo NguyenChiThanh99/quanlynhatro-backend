@@ -45,6 +45,6 @@ router.post('/request/updaterequest', authenticateToken, UpdateRequest)
 
 //NOTIFICATION
 router.post('/notification/create', authenticateToken, CreateNotification)
-router.post('/notification/getnotibyadminid', GetAllNotiByAdminId)
+router.post('/notification/getnotibyadminid', authenticateToken, GetAllNotiByAdminId)
 router.post('/notification/getnotibyblockandroomid', authenticateToken, GetNotiByBlockAndRoomId)
 module.exports = router;
