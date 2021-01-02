@@ -179,3 +179,41 @@ exports.GetPaymentByBlockId = async function(req, res) {
         })
     }
 }
+
+exports.ChangeStatusPayment = async function(req, res) {
+    if (!req.body) {
+        return res.json({
+            status: false,
+            message: "Empty Body"
+        })
+    }
+    try {
+        const paymentroomId = req.body.paymentroomId;
+        const status = req.body.status;
+        if (!paymentroomId) {
+            return res.json({
+                status: false,
+                message: "PaymentRoomId is required"
+            })
+        }
+        const checkPaymentRoom = await PaymentRoom.findOne({ _id: paymentroomId, isDeleted: false })
+        if (!checkPaymentRoom || checkPaymentRoom == '' || checkPaymentRoom == null) {
+            return res.json({
+                status: false,
+                message: "Không tìm thấy paymentroom"
+            })
+        } else {
+            checkPaymentRoom.status = status;
+            await checkPaymentRoom.save();
+            return res.json({
+                status: true,
+                message: "Thay đổi trạng thái thành công"
+            })
+        }
+    } catch(err) {
+        return res.json({
+            status: false,
+            message: err.message
+        })
+    }
+}
