@@ -1,4 +1,6 @@
 const Service = require('../models/Service')
+const Block = require('../models/Block')
+const Room = require('../models/Room')
 const User = require('../models/User')
 
 exports.CreateService = async function(req, res) {
@@ -134,6 +136,53 @@ exports.UpdateService = async function(req, res) {
             return res.json({
                 status: true,
                 Service: checkService
+            })
+        }
+    } catch(err) {
+        return res.json({
+            status: false,
+            message: err.message
+        })
+    }
+}
+
+exports.GetServiceByBlockId = async function(req, res) {
+    if (!req.body) {
+        return res.json({
+            status: false,
+            message: "Empty Body"
+        })
+    }
+    try {
+        const blockId = req.body.blockId;
+        if (!blockId) {
+            return res.json({
+                status: false,
+                message: "BlockId is required"
+            })
+        }
+        const checkBlock = await Block.findOne({ _id: blockId, isDeleted: false })
+        if (!checkBlock) {
+            return res.json({
+                status: false,
+                message: "Block không tồn tại"
+            })
+        }
+        let checkRoom = await Room.find({ blockId: blockId, isDeleted: false }).select({service:1, name:1})
+        if (!checkRoom || checkRoom == '' || checkRoom == null) {
+            return res.json({
+                status: false,
+                message: "Room Empty"
+            })
+        } else {
+            for (let i = 0; i < checkRoom.length; i++) {
+                checkRoom[i].service = await Promise.all(checkRoom[i].service.map(async newservice => {
+                    return await Service.findOne({ _id: newservice })
+                }))
+            }
+            return res.json({
+                status: true,
+                Service: checkRoom
             })
         }
     } catch(err) {

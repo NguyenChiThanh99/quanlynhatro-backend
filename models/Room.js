@@ -35,11 +35,11 @@ var roomSchema = new Schema({
         type: String,
         required: true
     },
-    service: {
-        type: [Schema.Types.ObjectId],
+    service: [{
+        type: Schema.Types.ObjectId,
         ref: 'Service',
         default: undefined
-    },
+    }],
     isDeleted: {
         type: Boolean,
         default: false
