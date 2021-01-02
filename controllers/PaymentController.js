@@ -49,6 +49,13 @@ exports.CreatePayment = async function(req, res) {
                 message: "Date is required"
             })
         }
+        const checkpayment = await Payment.findOne({ blockId: payment.blockId, month: payment.month, year: payment.year, isDeleted: false })
+        if (checkpayment) {
+            return res.json({
+                status: false,
+                message: "Payment đã tồn tại"
+            })
+        }
         const listpaymentroom = [];
         for (let i = 0; i < content.length; i++) {
             const paymentroom = {
@@ -118,5 +125,57 @@ exports.CreatePayment = async function(req, res) {
 }
 
 exports.GetPaymentByBlockId = async function(req, res) {
-
+    if (!req.body) {
+        return res.json({
+            status: false,
+            message: "Empty Body"
+        })
+    }
+    try {
+        const blockId = req.body.blockId;
+        const month = req.body.month;
+        const year = req.body.year;
+        if (!blockId) {
+            return res.json({
+                status: false,
+                message: "BlockId is required"
+            })
+        }
+        const checkBlock = await Block.findOne({ _id: blockId, isDeleted: false })
+        if (!checkBlock) {
+            return res.json({
+                status: false,
+                message: "Block không tồn tại"
+            })
+        }
+        if (!month) {
+            return res.json({
+                status: false,
+                message: "Month is required"
+            })
+        }
+        if (!year) {
+            return res.json({
+                status: false,
+                message: "Year is required"
+            })
+        }
+        const checkPayment = await Payment.findOne({ blockId: blockId, isDeleted: false, month: month, year: year }).populate('paymentroom')
+        if (!checkPayment || checkPayment == '' || checkPayment == null) {
+            return res.json({
+                status: false,
+                message: "Không tìm thấy payment"
+            })
+        } else {
+            return res.json({
+                status: true,
+                Payment: checkPayment
+            })
+        }
+    } catch(err) {
+        return res.json({
+            status: false,
+            message: err.message
+        })
+    }
 }
