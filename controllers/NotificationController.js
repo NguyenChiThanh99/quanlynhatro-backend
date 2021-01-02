@@ -90,7 +90,7 @@ exports.GetAllNotiByAdminId = async function(req, res) {
                 message: "UserId không tồn tại"
             })
         }
-        const checkNoti = await Notification.find({ userId: userId, isDeleted: false })
+        let checkNoti = await Notification.find({ userId: userId, isDeleted: false })
         if (!checkNoti || checkNoti == '' || checkNoti == null) {
             return res.json({
                 status: false,
@@ -153,7 +153,7 @@ exports.GetNotiByBlockAndRoomId = async function(req, res) {
         }
         const checkNotiBlock = await Notification.find({ type: "Block", deliveryId: blockId, isDeleted: false })
         if (checkNotiBlock.length != 0) {
-            checkNotiAll = checkNotiAll.concat(checkBlock)
+            checkNotiAll = checkNotiAll.concat(checkNotiBlock)
         }
         if (!checkNotiAll || checkNotiAll == '' || checkNotiAll == null) {
             return res.json({
