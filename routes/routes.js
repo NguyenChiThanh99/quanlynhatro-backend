@@ -3,7 +3,7 @@ const router = express.Router()
 const {authenticateToken} = require('../controllers/AuthController')
 const {Register, ChangePassword, ForgetPassword, Login, GetAllUserByRoomId, GetUserByEmail, UpdateCustomer, GetUserByAdminId, UpdateAvatarCustomer, DeletedUser} = require('../controllers/UserController')
 const {Create, GetAllBlockByAdminId, GetBlockByRoomId} = require('../controllers/BlockController')
-const {CreateService, getServiceByAdminId} = require('../controllers/ServiceController')
+const {CreateService, getServiceByAdminId, UpdateService} = require('../controllers/ServiceController')
 const {CreateRoom, GetRoomByBlockId, DeleteRoom, GetAllRoomByUserId, UpdateRoom} = require('../controllers/RoomController')
 const {CreateRequest, GetRequestByUserId, UpdateRequest, GetRequestByAdminId} = require('../controllers/RequestController')
 const {CreateNotification, GetAllNotiByAdminId, GetNotiByBlockAndRoomId} = require('../controllers/NotificationController')
@@ -29,6 +29,7 @@ router.post('/block/getblockbyroomid', authenticateToken, GetBlockByRoomId)
 ///SERVICE
 router.post('/service/create', authenticateToken, CreateService)
 router.post('/service/getservicebyadminid', authenticateToken, getServiceByAdminId)
+router.post('/service/updateservice', authenticateToken, UpdateService)
 
 ///ROOM
 router.post('/room/create', authenticateToken, CreateRoom)

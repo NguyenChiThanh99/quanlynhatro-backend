@@ -95,3 +95,51 @@ exports.getServiceByAdminId = async function(req, res) {
         })
     }
 }
+
+exports.UpdateService = async function(req, res) {
+    if (!req.body) {
+        return res.json({
+            status: false,
+            message: "Empty Body"
+        })
+    }
+    try {
+        const updateservice = {
+            serviceId: req.body.serviceId,
+            price: req.body.price,
+            calculate: req.body.calculate
+        }
+        if (!updateservice.price) {
+            return res.json({
+                status: false,
+                message: "Price is required"
+            })
+        }
+        if (!updateservice.calculate) {
+            return res.json({
+                status: false,
+                message: "Calculate is required"
+            })
+        }
+        const checkService = await Service.findOne({ _id: updateservice.serviceId, isDeleted: false })
+        if (!checkService || checkService == null || checkService == '') {
+            return res.json({
+                status: false,
+                message: "Không tìm thấy dịch vụ"
+            })
+        } else {
+            checkService.price = updateservice.price;
+            checkService.calculate = updateservice.calculate;
+            await checkService.save();
+            return res.json({
+                status: true,
+                Service: checkService
+            })
+        }
+    } catch(err) {
+        return res.json({
+            status: false,
+            message: err.message
+        })
+    }
+}
