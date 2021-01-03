@@ -281,11 +281,15 @@ exports.GetPaymentRoomSixMonth = async function(req, res) {
                         listpaymentroom.push(convert);
                     }
                 }
-                if (listpaymentroom.length == 6) break;
+            }
+            const result = []
+            for (let i = 0; i < 6; i++) {
+                if (listpaymentroom[(page-1)*6  + i] == undefined) break;
+                result.push(listpaymentroom[(page-1)*6  + i])
             }
             return res.json({
-                status: false,
-                PaymentRoomSixMonth: listpaymentroom    
+                status: true,
+                PaymentRoomSixMonth: result    
             })
         }
     } catch(err) {
