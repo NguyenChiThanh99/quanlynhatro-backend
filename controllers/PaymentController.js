@@ -2,6 +2,7 @@ const PaymentRoom = require('../models/PaymentRoom')
 const Payment = require('../models/Payment')
 const Block = require('../models/Block')
 const Room = require('../models/Room')
+const User = require('../models/User')
 
 exports.CreatePayment = async function(req, res) {
     if (!req.body) {
@@ -291,6 +292,71 @@ exports.GetPaymentRoomSixMonth = async function(req, res) {
             return res.json({
                 status: true,
                 PaymentRoomSixMonth: result    
+            })
+        }
+    } catch(err) {
+        return res.json({
+            status: false,
+            message: err.message
+        })
+    }
+}
+
+exports.TotalPaymentSixMonth = async function(req, res) {
+    if (!req.body) {
+        return res.json({
+            status: false,
+            message: "Empty Body"
+        })
+    }
+    try {
+        const userId = req.body.userId;
+        if (!userId) {
+            return res.json({
+                status: false,
+                message: "UserId is required"
+            })
+        }
+        const checkUser = await User.findOne({ _id: userId, role: "Admin", isDeleted: false })
+        if (!checkUser) {
+            return res.json({
+                status: false,
+                message: "User không tồn tại"
+            })
+        } 
+        const checkBlock = await Block.find({ userId: userId, isDeleted: false })
+        if (!checkBlock) {
+            return res.json({
+                status: false,
+                message: "Không tìm thấy PaymentBlock"
+            })
+        } else {
+            let totalblock = []
+            for (let i = 0; i < checkBlock.length; i++) {
+                const paymentblock = await Payment.find({ blockId: checkBlock[i]._id, isDeleted: false }).populate('paymentroom').sort({ createdAt: -1 })
+                for (let j = 0; j < paymentblock.length; j++) {
+                    let totalprice = 0;
+                    let temp = 0;
+                    for (let z = 0; z < paymentblock[j].paymentroom.length; z++) {
+                        totalprice = totalprice + paymentblock[j].paymentroom[z].total;
+                    }
+                    for (let t = 0; t < totalblock.length; t++) {
+                        if ((paymentblock[j].month == totalblock[t].month) && (paymentblock[j].year == totalblock[t].year)) {
+                            temp = 1;
+                            totalblock[t].total += totalprice;
+                        }
+                    }
+                    if (temp == 0) {
+                        const convert = JSON.parse(JSON.stringify({"total": totalprice}))
+                        convert.month = paymentblock[j].month;
+                        convert.year = paymentblock[j].year;
+                        totalblock.push(convert);
+                    }
+                }
+            }
+            return res.json({
+                status: true,
+                Payment: totalblock
             })
         }
     } catch(err) {
