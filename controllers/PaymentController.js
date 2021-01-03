@@ -31,7 +31,7 @@ exports.CreatePayment = async function(req, res) {
             })
         }
         if (payment.month == 1) {
-            const checkmonthandyear = await Payment.findOne({ month: 12, year: payment.year-1, isDeleted: false })
+            const checkmonthandyear = await Payment.findOne({ month: 12, year: payment.year-1, blockId: payment.blockId ,isDeleted: false })
             if (!checkmonthandyear) {
                 return res.json({
                     status: false,
@@ -39,7 +39,7 @@ exports.CreatePayment = async function(req, res) {
                 })
             }
         } else {
-            const checkmonthandyear = await Payment.findOne({ month: payment.month-1, year: payment.year, isDeleted: false })
+            const checkmonthandyear = await Payment.findOne({ month: payment.month-1, year: payment.year, blockId: payment.blockId, isDeleted: false })
             if (!checkmonthandyear) {
                 return res.json({
                     status: false,
