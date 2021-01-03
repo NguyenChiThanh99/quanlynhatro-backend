@@ -336,18 +336,34 @@ exports.TotalPaymentSixMonth = async function(req, res) {
                 const paymentblock = await Payment.find({ blockId: checkBlock[i]._id, isDeleted: false }).populate('paymentroom').sort({ createdAt: -1 })
                 for (let j = 0; j < paymentblock.length; j++) {
                     let totalprice = 0;
+                    let totalelec = 0;
+                    let totalwater = 0;
                     let temp = 0;
                     for (let z = 0; z < paymentblock[j].paymentroom.length; z++) {
                         totalprice = totalprice + paymentblock[j].paymentroom[z].total;
+                        if (paymentblock[j].paymentroom[z].elec[3] == "VND / kWh") {
+                            totalelec = totalelec + (parseInt(paymentblock[j].paymentroom[z].elec[1]) - parseInt(paymentblock[j].paymentroom[z].elec[0]))*parseInt(paymentblock[j].paymentroom[z].elec[2])
+                        } else {
+                            totalelec = totalelec + parseInt(paymentblock[j].paymentroom[z].elec[2])
+                        }
+                        if (paymentblock[j].paymentroom[z].elec[3] == "VND / kWh") {
+                            totalwater = totalwater + (parseInt(paymentblock[j].paymentroom[z].water[1]) - parseInt(paymentblock[j].paymentroom[z].water[0]))*parseInt(paymentblock[j].paymentroom[z].water[2])
+                        } else {
+                            totalwater = totalwater + parseInt(paymentblock[j].paymentroom[z].water[2])
+                        }
                     }
                     for (let t = 0; t < totalblock.length; t++) {
                         if ((paymentblock[j].month == totalblock[t].month) && (paymentblock[j].year == totalblock[t].year)) {
                             temp = 1;
                             totalblock[t].total += totalprice;
+                            totalblock[t].totalelec += totalelec;
+                            totalblock[t].totalwater += totalwater;
                         }
                     }
                     if (temp == 0) {
                         const convert = JSON.parse(JSON.stringify({"total": totalprice}))
+                        convert.totalelec = totalelec;
+                        convert.totalwater = totalwater;
                         convert.month = paymentblock[j].month;
                         convert.year = paymentblock[j].year;
                         totalblock.push(convert);

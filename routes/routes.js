@@ -56,5 +56,5 @@ router.post('/payment/create', authenticateToken, CreatePayment)
 router.post('/payment/getpaymentbyblockid', authenticateToken, GetPaymentByBlockId)
 router.post('/payment/changestatuspayment', authenticateToken, ChangeStatusPayment)
 router.post('/payment/getpaymentroomsixmonth', authenticateToken, GetPaymentRoomSixMonth)
-router.post('/payment/totalpaymentsixmonth', authenticateToken, TotalPaymentSixMonth)
+router.post('/payment/totalpaymentsixmonth', TotalPaymentSixMonth)
 module.exports = router;
