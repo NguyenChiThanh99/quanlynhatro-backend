@@ -278,6 +278,7 @@ exports.GetPaymentRoomSixMonth = async function(req, res) {
                         const convert = JSON.parse(JSON.stringify(checkBlock[i].paymentroom[j]));
                         convert.month = checkBlock[i].month;
                         convert.year = checkBlock[i].year;
+                        convert.date = checkBlock[i].date
                         listpaymentroom.push(convert);
                     }
                 }
