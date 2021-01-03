@@ -30,6 +30,23 @@ exports.CreatePayment = async function(req, res) {
                 message: "Year is required"
             })
         }
+        if (payment.month == 1) {
+            const checkmonthandyear = await Payment.findOne({ month: 12, year: payment.year-1, isDeleted: false })
+            if (!checkmonthandyear) {
+                return res.json({
+                    status: false,
+                    message: "Tháng trước chưa được nhập"
+                })
+            }
+        } else {
+            const checkmonthandyear = await Payment.findOne({ month: payment.month-1, year: payment.year, isDeleted: false })
+            if (!checkmonthandyear) {
+                return res.json({
+                    status: false,
+                    message: "Tháng trước chưa được nhập"
+                })
+            }
+        }
         if (!payment.blockId) {
             return res.json({
                 status: false,
@@ -210,6 +227,44 @@ exports.ChangeStatusPayment = async function(req, res) {
                 message: "Thay đổi trạng thái thành công"
             })
         }
+    } catch(err) {
+        return res.json({
+            status: false,
+            message: err.message
+        })
+    }
+}
+
+exports.GetPaymentRoomSixMonth = async function(req, res) {
+    if (!req.body) {
+        return res.json({
+            status: false,
+            message: "Empty Body"
+        })
+    }
+    try {
+        const roomId = req.body.roomId;
+        const page = req.body.page;
+        if (!roomId) {
+            return res.json({
+                status: false,
+                message: "RoomId is required"
+            })
+        }
+        if (!page) {
+            return res.json({
+                status: false,
+                message: "Page is required"
+            })
+        }
+        const checkRoom = await Room.findOne({ _id: roomId, isDeleted: false })
+        if (!checkRoom) {
+            return res.json({
+                status: false,
+                message: "Không tìm thấy Room"
+            })
+        } 
+        
     } catch(err) {
         return res.json({
             status: false,
