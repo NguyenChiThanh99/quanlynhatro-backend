@@ -52,7 +52,7 @@ router.post('/notification/getnotibyadminid', authenticateToken, GetAllNotiByAdm
 router.post('/notification/getnotibyblockandroomid', authenticateToken, GetNotiByBlockAndRoomId)
 
 //PAYMENT
-router.post('/payment/create', CreatePayment)
+router.post('/payment/create', authenticateToken, CreatePayment)
 router.post('/payment/getpaymentbyblockid', authenticateToken, GetPaymentByBlockId)
 router.post('/payment/changestatuspayment', authenticateToken, ChangeStatusPayment)
 module.exports = router;
