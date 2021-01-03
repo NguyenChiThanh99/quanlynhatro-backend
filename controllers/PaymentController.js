@@ -264,7 +264,30 @@ exports.GetPaymentRoomSixMonth = async function(req, res) {
                 message: "Không tìm thấy Room"
             })
         } 
-        
+        const checkBlock = await Payment.find({ blockId: checkRoom.blockId, isDeleted: false }).populate('paymentroom').sort({createdAt: -1})
+        if (!checkBlock) {
+            return res.json({
+                status: false,
+                message: "Không tìm thấy PaymentBlock"
+            })
+        } else {
+            listpaymentroom = [];
+            for (let i = 0; i < checkBlock.length; i++) {
+                for (let j = 0; j < checkBlock[i].paymentroom.length; j++) {
+                    if (checkBlock[i].paymentroom[j].roomId == roomId) {
+                        const convert = JSON.parse(JSON.stringify(checkBlock[i].paymentroom[j]));
+                        convert.month = checkBlock[i].month;
+                        convert.year = checkBlock[i].year;
+                        listpaymentroom.push(convert);
+                    }
+                }
+                if (listpaymentroom.length == 6) break;
+            }
+            return res.json({
+                status: false,
+                PaymentRoomSixMonth: listpaymentroom    
+            })
+        }
     } catch(err) {
         return res.json({
             status: false,

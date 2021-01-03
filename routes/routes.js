@@ -7,7 +7,7 @@ const {CreateService, getServiceByAdminId, UpdateService, GetServiceByBlockId} =
 const {CreateRoom, GetRoomByBlockId, DeleteRoom, GetAllRoomByUserId, UpdateRoom} = require('../controllers/RoomController')
 const {CreateRequest, GetRequestByUserId, UpdateRequest, GetRequestByAdminId} = require('../controllers/RequestController')
 const {CreateNotification, GetAllNotiByAdminId, GetNotiByBlockAndRoomId} = require('../controllers/NotificationController')
-const {CreatePayment, GetPaymentByBlockId, ChangeStatusPayment} = require('../controllers/PaymentController')
+const {CreatePayment, GetPaymentByBlockId, ChangeStatusPayment, GetPaymentRoomSixMonth} = require('../controllers/PaymentController')
 
 ///USER
 router.post('/user/register', Register)
@@ -55,4 +55,5 @@ router.post('/notification/getnotibyblockandroomid', authenticateToken, GetNotiB
 router.post('/payment/create', authenticateToken, CreatePayment)
 router.post('/payment/getpaymentbyblockid', authenticateToken, GetPaymentByBlockId)
 router.post('/payment/changestatuspayment', authenticateToken, ChangeStatusPayment)
+router.post('/payment/getpaymentroomsixmonth', authenticateToken, GetPaymentRoomSixMonth)
 module.exports = router;
