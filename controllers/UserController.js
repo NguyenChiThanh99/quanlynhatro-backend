@@ -307,11 +307,15 @@ exports.Login = async function (req, res) {
         message: "Login Error",
       });
     }
-    // const token = await jwt.sign({user: checkuser}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '1800s'})
+    const token = await jwt.sign(
+      { user: checkuser },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "3600s" }
+    );
     return res.json({
       status: true,
       user: checkuser,
-      token: "token",
+      token: token,
     });
   } catch (err) {
     return res.json({
